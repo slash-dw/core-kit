@@ -8,7 +8,9 @@ use Illuminate\Support\ServiceProvider;
 use SlashDw\CoreKit\Cache\CacheInvalidator;
 use SlashDw\CoreKit\Cache\TaggedCacheInvalidator;
 use SlashDw\CoreKit\Http\Pagination\PaginationOptionsProvider;
+use SlashDw\CoreKit\Http\Responses\ApiErrorResponse;
 use SlashDw\CoreKit\Http\Responses\ApiResponseFactory;
+use SlashDw\CoreKit\Http\Responses\ApiSuccessResponse;
 use SlashDw\CoreKit\Http\Responses\DownloadResponseFactory;
 use SlashDw\CoreKit\Http\Tracing\TraceIdResolver;
 use SlashDw\CoreKit\Logging\ExceptionLogger;
@@ -32,8 +34,14 @@ class CoreKitServiceProvider extends ServiceProvider
         $this->app->singleton(TraceIdResolver::class);
         $this->app->singleton(PaginationOptionsProvider::class);
         $this->app->singleton(DownloadResponseFactory::class);
+        $this->app->singleton(ApiSuccessResponse::class);
+        $this->app->singleton(ApiErrorResponse::class);
         $this->app->singleton(ApiResponseFactory::class, function ($app): ApiResponseFactory {
-            return new ApiResponseFactory($app->make(TraceIdResolver::class));
+            return new ApiResponseFactory(
+                $app->make(TraceIdResolver::class),
+                $app->make(ApiSuccessResponse::class),
+                $app->make(ApiErrorResponse::class),
+            );
         });
     }
 

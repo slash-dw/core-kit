@@ -20,24 +20,23 @@ final class HttpControllerConcernsTest extends TestCase
         $success = $controller->probeSuccessJson();
         $this->assertSame(200, $success->getStatusCode());
         $body = $success->getData(true);
-        $this->assertTrue($body['success']);
-        $this->assertSame('Hello', $body['message']);
-        $this->assertSame('trace-trait', $body['trace_id']);
         $this->assertSame(['key' => 1], $body['data']);
+        $this->assertSame('Hello', $body['meta']['message']);
+        $this->assertSame('trace-trait', $body['meta']['trace_id']);
 
         $items = [['a' => 1]];
         $paginator = new LengthAwarePaginator($items, 5, 1, 1);
         $paginator->setPath('https://example.test/p');
         $paged = $controller->probeSuccessJsonPaginated($paginator);
         $this->assertSame($items, $paged->getData(true)['data']);
-        $this->assertSame(['extra' => true], $paged->getData(true)['meta']);
+        $this->assertSame(true, $paged->getData(true)['meta']['extra']);
 
         $inf = $controller->probeSuccessJsonForInfiniteScroll();
         $this->assertTrue($inf->getData(true)['data']['has_more']);
 
         $err = $controller->probeErrorJson();
         $this->assertSame(409, $err->getStatusCode());
-        $this->assertSame('E_CODE', $err->getData(true)['error']['code']);
+        $this->assertSame('E_CODE', $err->getData(true)['errors'][0]['code']);
     }
 
     public function test_handles_download_responses_trait(): void

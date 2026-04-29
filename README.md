@@ -13,6 +13,10 @@ Exact Laravel component constraints are defined in `composer.json`.
 
 ### HTTP
 - `ApiResponseFactory`
+- `ApiSuccessResponse`
+- `ApiErrorResponse`
+- `ApiMeta`
+- `ApiErrorItem`
 - `DownloadResponseFactory`
 - `TraceIdResolver`
 - `PaginationOptionsProvider`

@@ -20,10 +20,10 @@ final class ApiResponseFactoryTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $payload = $response->getData(true);
-        $this->assertTrue($payload['success']);
-        $this->assertSame('Done', $payload['message']);
-        $this->assertSame('trace-success', $payload['trace_id']);
         $this->assertSame(['item' => 1], $payload['data']);
+        $this->assertSame('trace-success', $payload['meta']['trace_id']);
+        $this->assertSame('Done', $payload['meta']['message']);
+        $this->assertArrayHasKey('timestamp', $payload['meta']);
     }
 
     public function test_success_paginated_structure(): void
@@ -40,16 +40,16 @@ final class ApiResponseFactoryTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $payload = $response->getData(true);
-        $this->assertTrue($payload['success']);
-        $this->assertSame('Listed', $payload['message']);
-        $this->assertSame('trace-page', $payload['trace_id']);
         $this->assertSame($items, $payload['data']);
-        $this->assertSame(2, $payload['pagination']['current_page']);
-        $this->assertSame(10, $payload['pagination']['last_page']);
-        $this->assertSame(2, $payload['pagination']['per_page']);
-        $this->assertSame(20, $payload['pagination']['total']);
-        $this->assertTrue($payload['pagination']['has_more_pages']);
-        $this->assertSame(['version' => 3], $payload['meta']);
+        $this->assertSame('trace-page', $payload['meta']['trace_id']);
+        $this->assertSame(2, $payload['meta']['pagination']['page']);
+        $this->assertSame(10, $payload['meta']['pagination']['total_pages']);
+        $this->assertSame(2, $payload['meta']['pagination']['per_page']);
+        $this->assertSame(20, $payload['meta']['pagination']['total']);
+        $this->assertTrue($payload['meta']['pagination']['has_next']);
+        $this->assertTrue($payload['meta']['pagination']['has_prev']);
+        $this->assertSame(3, $payload['meta']['version']);
+        $this->assertSame('Listed', $payload['meta']['message']);
     }
 
     public function test_success_infinite_scroll_shape(): void
@@ -64,7 +64,8 @@ final class ApiResponseFactoryTest extends TestCase
         $this->assertSame([10, 20], $payload['data']['items']);
         $this->assertFalse($payload['data']['has_more']);
         $this->assertNull($payload['data']['next_offset']);
-        $this->assertSame('trace-inf', $payload['trace_id']);
+        $this->assertSame('trace-inf', $payload['meta']['trace_id']);
+        $this->assertSame('More', $payload['meta']['message']);
     }
 
     public function test_error_sets_status_and_error_code(): void
@@ -77,11 +78,11 @@ final class ApiResponseFactoryTest extends TestCase
 
         $this->assertSame(422, $response->getStatusCode());
         $payload = $response->getData(true);
-        $this->assertFalse($payload['success']);
-        $this->assertSame('Bad input', $payload['message']);
-        $this->assertSame('trace-err', $payload['trace_id']);
-        $this->assertSame(['field' => 'email'], $payload['data']);
-        $this->assertSame('E_VALIDATION', $payload['error']['code']);
+        $this->assertSame('trace-err', $payload['meta']['trace_id']);
+        $this->assertSame(422, $payload['errors'][0]['status']);
+        $this->assertSame('E_VALIDATION', $payload['errors'][0]['code']);
+        $this->assertSame('Bad input', $payload['errors'][0]['detail']);
+        $this->assertSame(['field' => 'email'], $payload['errors'][0]['source']);
     }
 
     private function requireLaravelApplication(): Application

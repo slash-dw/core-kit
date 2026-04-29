@@ -6,6 +6,7 @@ namespace SlashDw\CoreKit\Http\Controllers\Concerns;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use SlashDw\CoreKit\Http\Responses\ApiResponseFactory;
 
@@ -39,5 +40,10 @@ trait ApiResponses
     protected function errorJson(string $message = 'Unexpected error.', int $statusCode = 400, mixed $data = null, ?string $errorCode = null): JsonResponse
     {
         return App::make(ApiResponseFactory::class)->error($message, $statusCode, $data, $errorCode);
+    }
+
+    protected function noContentJson(): Response
+    {
+        return App::make(ApiResponseFactory::class)->noContent();
     }
 }

@@ -44,6 +44,11 @@ final class HttpConcernsProbeController extends Controller
         return $this->errorJson('Nope', 409, ['detail' => 'x'], 'E_CODE');
     }
 
+    public function probeNoContentJson(): JsonResponse
+    {
+        return $this->noContentJson();
+    }
+
     public function probeDownloadContent(): Response
     {
         return $this->downloadContent('binary', 'file.bin', 'application/octet-stream');

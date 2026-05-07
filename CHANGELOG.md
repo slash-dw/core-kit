@@ -4,6 +4,12 @@ All notable changes to this package are documented in this file following [Keep 
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-05-07
+
+### Fixed
+
+- `ApiSuccessResponse::noContent()` and `ApiResponseFactory::noContent()` now return `JsonResponse` (status 204) instead of a plain `Response`, ensuring a consistent `JsonResponse` contract across all factory methods.
+
 ### Added
 
 - MIT license, Larastan (PHPStan level 8), Pint, CI, and `composer` scripts (`lint`, `analyse`, `test`, `ci`).

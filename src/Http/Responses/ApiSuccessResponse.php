@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SlashDw\CoreKit\Http\Responses;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 final class ApiSuccessResponse
 {
@@ -17,8 +16,8 @@ final class ApiSuccessResponse
         ], $statusCode);
     }
 
-    public function noContent(): Response
+    public function noContent(): JsonResponse
     {
-        return response('', 204);
+        return new JsonResponse(null, 204);
     }
 }

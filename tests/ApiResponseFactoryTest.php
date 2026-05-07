@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SlashDw\CoreKit\Tests;
 
 use Illuminate\Foundation\Application;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use SlashDw\CoreKit\Http\Responses\ApiResponseFactory;
 
@@ -83,6 +84,17 @@ final class ApiResponseFactoryTest extends TestCase
         $this->assertSame('E_VALIDATION', $payload['errors'][0]['code']);
         $this->assertSame('Bad input', $payload['errors'][0]['detail']);
         $this->assertSame(['field' => 'email'], $payload['errors'][0]['source']);
+    }
+
+    public function test_no_content_returns_json_response_with_204(): void
+    {
+        $app = $this->requireLaravelApplication();
+
+        $factory = $app->make(ApiResponseFactory::class);
+        $response = $factory->noContent();
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertSame(204, $response->getStatusCode());
     }
 
     private function requireLaravelApplication(): Application

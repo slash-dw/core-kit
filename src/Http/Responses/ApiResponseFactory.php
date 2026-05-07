@@ -6,7 +6,6 @@ namespace SlashDw\CoreKit\Http\Responses;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use SlashDw\CoreKit\Http\Tracing\TraceIdResolver;
 
 final class ApiResponseFactory
@@ -82,7 +81,7 @@ final class ApiResponseFactory
         return $this->apiErrorResponse->make([$error], $this->meta(), $statusCode);
     }
 
-    public function noContent(): Response
+    public function noContent(): JsonResponse
     {
         return $this->apiSuccessResponse->noContent();
     }
